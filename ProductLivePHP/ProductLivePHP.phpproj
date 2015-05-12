@@ -8,6 +8,13 @@
     <RootNamespace>ProductLivePHP</RootNamespace>
     <ProjectTypeGuids>{A0786B88-2ADB-4C21-ABE8-AA2D79766269}</ProjectTypeGuids>
     <AssemblyName>ProductLivePHP</AssemblyName>
+    <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+    <Server>PHPDev</Server>
+    <PublishEvent>None</PublishEvent>
+    <PHPDevAutoPort>True</PHPDevAutoPort>
+    <PHPDevPort>21556</PHPDevPort>
+    <PHPDevHostName>localhost</PHPDevHostName>
+    <IISProjectUrl>http://localhost:21556/</IISProjectUrl>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <IncludeDebugInformation>true</IncludeDebugInformation>
@@ -16,6 +23,33 @@
     <IncludeDebugInformation>false</IncludeDebugInformation>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="core\pl\Messages\AcquittalMessage.php" />
+    <Compile Include="core\pl\Messages\Contacts.php" />
+    <Compile Include="core\pl\Messages\FamiliesMessage.php" />
+    <Compile Include="core\pl\Messages\MatrixMessage.php" />
+    <Compile Include="core\pl\Messages\ProductMessage.php" />
+    <Compile Include="core\pl\Resources\Consumer.php" />
+    <Compile Include="core\pl\Resources\Data.php" />
+    <Compile Include="core\pl\Resources\ProductLiveService.php" />
+    <Compile Include="core\pl\Resources\RestAPI.php" />
+    <Compile Include="core\pl\Resources\Util.php" />
+    <Compile Include="core\pl\Sender.php" />
     <Compile Include="index.php" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="core\" />
+    <Folder Include="core\css\" />
+    <Folder Include="core\js\" />
+    <Folder Include="core\pl\" />
+    <Folder Include="core\pl\Messages\" />
+    <Folder Include="core\pl\Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="core\css\bootstrap.min.css" />
+    <Content Include="core\js\bootstrap.min.js" />
+    <Content Include="core\js\html5shiv.min.js" />
+    <Content Include="core\js\jquery.min.js" />
+    <Content Include="core\js\respond.min.js" />
+    <Content Include="core\pl\config.ini" />
   </ItemGroup>
 </Project>
