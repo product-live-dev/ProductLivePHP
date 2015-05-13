@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 require_once('core/pl/Resources/Util.php');
 require_once('core/pl/Resources/RestAPI.php');
@@ -59,10 +59,11 @@ if(isset($_GET['update'])) {
         // Get the message
         $pl = new ProductLiveWrapper();
         $matrixMessage = $pl->updateMatrixFromMyITToProductLive();
+        var_dump($matrixMessage);
         // Send the message
         $rest = new RestAPI();
         $response = $rest->postMessage($matrixMessage, "matrix", "create");
-        var_dump($response);
+        $matrixResponse = createMessageFromCode($response['http_code']);
     }
 }
 
@@ -165,7 +166,7 @@ $password = $databaseConfig['password'];
     ?>
 
     <div class="page-header">
-        <h1>Mise &agrave; jour des structures <small>Cliquez sur une des structures</small></h1>
+        <h1>éMise &agrave; jour des structures <small>Cliquez sur une des structures</small></h1>
     </div>
     <div>
         <h2>Taxonomie</h2>
@@ -173,6 +174,20 @@ $password = $databaseConfig['password'];
             <button type="submit" class="btn btn-primary <?php if ($keyInvalid==true | $connectionStringProductLive==="") echo 'disabled'; ?>">Mettre &agrave; jour la "Matrix"</button>
         </form>
         <button type="submit" class="btn btn-primary <?php if ($keyInvalid==true | $connectionStringProductLive==="") echo 'disabled'; ?>" style="margin-left: 10px;">Mettre &agrave; jour les "families"</button>
+        
+        <?php
+            if (isset($matrixResponse) && $matrixResponse[0] == true) {
+                echo '<br/><br/>
+                <div class="alert alert-success" role="alert">
+                    '.$matrixResponse[1].'
+                </div>';
+            } else if (isset($matrixResponse) && $matrixResponse[0] == false) {
+                echo '<br/><br/>
+                <div class="alert alert-danger" role="alert">
+                    '.$matrixResponse[1].'
+                </div>';
+            }
+        ?>
         <h2>Contacts</h2>
         <button type="submit" class="btn btn-primary <?php if ($keyInvalid==true | $connectionStringProductLive==="") echo 'disabled'; ?>">Mettre &agrave; jour les "contacts"</button>
     </div>
@@ -201,7 +216,20 @@ $password = $databaseConfig['password'];
     <div class="page-header">
         <h1>Service de message <small>D&eacute;marrer le service</small></h1>
     </div>
+    <div>
+        <div class="alert alert-warning" role="alert">
+            <strong>Information</strong> Le service de message n'est pas en marche
+        </div>
+        <button type="submit" class="btn btn-primary" style="display: inline;">D&eacute;marrer le service de message</button>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <center>
+        &copy;Product-Live
+    </center>
 </div>
+
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="core/js/jquery.min.js"></script>

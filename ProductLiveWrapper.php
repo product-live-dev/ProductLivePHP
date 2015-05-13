@@ -22,12 +22,12 @@ class ProductLiveWrapper
     
         // Create marketing attributes
         $marketing = array();
-        $marketingNameAttribute = new Marketing("name", array(new NameLang("Nom", LANG::FR)), true, DATA_TYPE::TEXT);
-        $marketingShortDescriptionAttribute = new Marketing("description_short", array(new NameLang("Description courte", LANG::FR)), true, DATA_TYPE::RICHTEXT);
-        $marketingLongDescriptionAttribute = new Marketing("description", array(new NameLang("Description longue", LANG::FR)), true, DATA_TYPE::RICHTEXT);
-        array_push($marketing, $marketingNameAttribute);
-        array_push($marketing, $marketingShortDescriptionAttribute);
-        array_push($marketing, $marketingLongDescriptionAttribute);
+        $marketingLibelleArticleAttribute = new Marketing("libelle_article", array(new NameLang("Libelle article", LANG::FR)), true, DATA_TYPE::TEXT);
+        $marketingLibelleLongAttribute = new Marketing("libelle_long", array(new NameLang("Libelle long", LANG::FR)), true, DATA_TYPE::RICHTEXT);
+        $marketingDescriptifAttribute = new Marketing("descriptif", array(new NameLang("Descriptif", LANG::FR)), true, DATA_TYPE::RICHTEXT);
+        array_push($marketing, $marketingLibelleArticleAttribute);
+        array_push($marketing, $marketingLibelleLongAttribute);
+        array_push($marketing, $marketingDescriptifAttribute);
         
         // Pivots
         $pivots = array();

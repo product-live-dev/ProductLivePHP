@@ -13,19 +13,20 @@ class BlobMessage {
 }
 
 class RestAPI {
-    // public $urlPost = "https://productlive.servicebus.windows.net/connectorsqueuedev/messages?timeout=60";
-    // public $urlGet = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/head?timeout=10";
-    // public $urlDelete = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/";
-    // public $urlBlob = "http://dev-productlive-connectors.azurewebsites.net/rest/message";
-
-    public $urlPost = "https://productlive.servicebus.windows.net/connectorsqueue/messages?timeout=60";
+    public $urlPost = "https://productlive.servicebus.windows.net/connectorsqueuedev/messages?timeout=60";
     public $urlGet = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/head?timeout=10";
     public $urlDelete = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/";
-    public $urlBlob = "http://productlive-connectors.azurewebsites.net/rest/message";
+    public $urlBlob = "http://dev-productlive-connectors.azurewebsites.net/rest/message";
+
+    //public $urlPost = "https://productlive.servicebus.windows.net/connectorsqueue/messages?timeout=60";
+    //public $urlGet = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/head?timeout=10";
+    //public $urlDelete = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/";
+    //public $urlBlob = "http://productlive-connectors.azurewebsites.net/rest/message";
 
     function postMessage($message, $flux, $action) {
-        $sendMessageToken = Configuration::get('PL_SEND_MESSAGE_TOKEN');
-        $sender = Configuration::get('PL_SENDER');
+        $productLiveConfig = parse_ini_file(__DIR__."/../config.ini");
+        $sendMessageToken = $productLiveConfig['sendMessageToken'];
+        $sender = $productLiveConfig['sender'];
         $content_json = json_encode($message, JSON_UNESCAPED_UNICODE);
 
         $messageSize = strBytes($content_json);
@@ -142,7 +143,7 @@ class RestAPI {
                     'content' => $content_json
                 )
             );
-            //var_dump($headers);
+            var_dump($headers);
 
             // Creates a stream context
             $context = stream_context_create($headers);

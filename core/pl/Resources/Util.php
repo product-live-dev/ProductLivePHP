@@ -17,7 +17,7 @@ function createMessageFromCode($code) {
     switch ($code) {
         case "201":
             $sendOk = true;
-            $resultMessage = "<strong>Bravo!</strong> La demande de mise à jour a bien été envoyée. Pour suivre son traitement reportez vous aux tableaux de suivis ci-dessous.";
+            $resultMessage = "<strong>Bravo!</strong> La demande de mise &agrave; jour a bien &eacute;t&eacute; envoy&eacute;e. Pour suivre son traitement reportez vous aux tableau de suivi dans vos interface Product-Live.";
             break;
         case "400":
             $sendOk = false;
@@ -25,23 +25,23 @@ function createMessageFromCode($code) {
             break;
         case "401":
             $sendOk = false;
-            $resultMessage = "<strong>Erreur 401.</strong> Échec de l'autorisation. Votre clé d'identification ne doit pas être valide.";
+            $resultMessage = "<strong>Erreur 401.</strong> &eacute;chec de l'autorisation. Votre cl&eacute; d'identification ne doit pas être valide.";
             break;
         case "403":
             $sendOk = false;
-            $resultMessage = "<strong>Erreur 403.</strong> Quota dépassé ou message trop volumineux. Contactez l'équipe le support Product-Live";
+            $resultMessage = "<strong>Erreur 403.</strong> Quota d&eacute;pass&eacute; ou message trop volumineux. Contactez l'&eacute;quipe le support Product-Live";
             break;
         case "410":
             $sendOk = false;
-            $resultMessage = "<strong>Erreur 410.</strong> La file d'attente ou la rubrique spécifiée n'existe pas.";
+            $resultMessage = "<strong>Erreur 410.</strong> La file d'attente ou la rubrique sp&eacute;cifi&eacute;e n'existe pas.";
             break;
         case "500":
             $sendOk = false;
-            $resultMessage = "<strong>Erreur 500.</strong> Erreur interne. Veuillez réessayer plus tard. Si le problème persiste contactez le support Product-Live";
+            $resultMessage = "<strong>Erreur 500.</strong> Erreur interne. Veuillez r&eacute;essayer plus tard. Si le problème persiste contactez le support Product-Live";
             break;
         case "1000":    // L'url du service bus n'est pas bonne.
             $sendOk = false;
-            $resultMessage = "<strong>Erreur 1000.</strong> Votre clé de connexion n'est pas bonne. Si le problème persiste contactez le support Product-Live";
+            $resultMessage = "<strong>Erreur 1000.</strong> Votre cl&eacute; de connexion n'est pas bonne. Si le problème persiste contactez le support Product-Live";
             break;
     }
     return array($sendOk, $resultMessage);
