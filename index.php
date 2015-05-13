@@ -63,7 +63,24 @@ if(isset($_POST['update'])) {
         $rest = new RestAPI();
         $response = $rest->postMessage($matrixMessage, "matrix", "create");
         $matrixResponse = createMessageFromCode($response['http_code']);
-    }
+    } else if ($_POST['update'] == 'families') {
+        // Get the message
+        $pl = new ProductLiveWrapper();
+        $familiesMessage = $pl->updateFamiliesFromMyITToProductLive();
+        // Send the message
+        $rest = new RestAPI();
+        $response = $rest->postMessage($familiesMessage, "families", "create");
+        $familiesResponse = createMessageFromCode($response['http_code']);
+    } else if ($_POST['update'] == 'products') {
+        // Get the message
+        $pl = new ProductLiveWrapper();
+        $productsMessage = $pl->updateProductsFromMyITToProductLive(3);
+        var_dump($productsMessage);
+        // Send the message
+        $rest = new RestAPI();
+        $response = $rest->postMessage($productsMessage, "products", "create");
+        $productsResponse = createMessageFromCode($response['http_code']);
+    } 
 }
 
 
@@ -173,8 +190,10 @@ $password = $databaseConfig['password'];
             <input type="hidden" name="update" value="matrix">
             <button type="submit" class="btn btn-primary <?php if ($keyInvalid==true | $connectionStringProductLive==="") echo 'disabled'; ?>">Mettre &agrave; jour la "Matrix"</button>
         </form>
-        <button type="submit" class="btn btn-primary <?php if ($keyInvalid==true | $connectionStringProductLive==="") echo 'disabled'; ?>" style="margin-left: 10px;">Mettre &agrave; jour les "families"</button>
-        
+        <form  method="post" action="<?php $_SERVER['REQUEST_URI'] ?>" style="display: inline;">
+            <input type="hidden" name="update" value="families">
+            <button type="submit" class="btn btn-primary <?php if ($keyInvalid==true | $connectionStringProductLive==="") echo 'disabled'; ?>" style="margin-left: 10px;">Mettre &agrave; jour les "families"</button>
+        </form>
         <?php
             if (isset($matrixResponse) && $matrixResponse[0] == true) {
                 echo '<br/><br/>
@@ -188,6 +207,19 @@ $password = $databaseConfig['password'];
                 </div>';
             }
         ?>
+        <?php
+            if (isset($familiesResponse) && $familiesResponse[0] == true) {
+                echo '<br/><br/>
+                <div class="alert alert-success" role="alert">
+                    '.$familiesResponse[1].'
+                </div>';
+            } else if (isset($familiesResponse) && $familiesResponse[0] == false) {
+                echo '<br/><br/>
+                <div class="alert alert-danger" role="alert">
+                    '.$familiesResponse[1].'
+                </div>';
+            }
+        ?>
         <h2>Contacts</h2>
         <button type="submit" class="btn btn-primary <?php if ($keyInvalid==true | $connectionStringProductLive==="") echo 'disabled'; ?>">Mettre &agrave; jour les "contacts"</button>
     </div>
@@ -195,22 +227,25 @@ $password = $databaseConfig['password'];
         <h1>Mise &agrave; jour des produits <small>S&eacute;lectionnez un nombre de produits</small></h1>
     </div>
     <div>
-        <div style="float:left;">
-            <div class="form-group">
-                <label class="col-xs-5 control-label">Nombre de produits</label>
-                <div class="col-xs-5 selectContainer">
-                    <select name="products" class="form-control">
-                        <option value="3">3</option>
-                        <option value="10">10</option>
-                        <option value="100">100</option>
-                        <option value="all">Tous</option>
-                    </select>
+        <form  method="post" action="<?php $_SERVER['REQUEST_URI'] ?>" style="display: inline;">
+            <div style="float:left;">
+                <div class="form-group">
+                    <label class="col-xs-5 control-label">Nombre de produits</label>
+                    <div class="col-xs-5 selectContainer">
+                        <select name="products" class="form-control">
+                            <option value="3">3</option>
+                            <option value="10">10</option>
+                            <option value="100">100</option>
+                            <option value="all">Tous</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div style="float:left;">
-            <button type="submit" class="btn btn-primary <?php if ($keyInvalid==true | $connectionStringProductLive==="") echo 'disabled'; ?>">Mettre &agrave; jour les produits</button>
-        </div>
+            <input type="hidden" name="update" value="products">
+            <div style="float:left;">
+                <button type="submit" class="btn btn-primary <?php if ($keyInvalid==true | $connectionStringProductLive==="") echo 'disabled'; ?>">Mettre &agrave; jour les produits</button>
+            </div>
+        </form>
     </div>
     <br/><br/>
     <div class="page-header">

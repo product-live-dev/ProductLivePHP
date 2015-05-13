@@ -28,9 +28,10 @@ class RestAPI {
 
     function __construct()
     {
+        // Product-Live config
         $productLiveConfig = parse_ini_file(__DIR__."/../config.ini");
-        $this->$sendMessageToken = $productLiveConfig['sendMessageToken'];
-        $this->$sender = $productLiveConfig['sender'];
+        $this->sendMessageToken = $productLiveConfig['sendMessageToken'];
+        $this->sender = $productLiveConfig['sender'];
     }
 
     function postMessage($message, $flux, $action) {

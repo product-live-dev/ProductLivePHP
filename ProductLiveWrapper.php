@@ -10,6 +10,22 @@ require_once(__DIR__.'/core/pl/Resources/Util.php');
 
 class ProductLiveWrapper
 {
+
+    public $hostname = "";
+    public $dbname = "";
+    public $username = "";
+    public $password = "";
+
+    function __construct()
+    {
+        // Product-Live config
+        $databaseConfig = parse_ini_file(__DIR__."/config.ini");
+        $this->hostname = $databaseConfig['hostname'];
+        $this->dbname = $databaseConfig['dbname'];
+        $this->username = $databaseConfig['username'];
+        $this->password = $databaseConfig['password'];
+    }
+
     /*
      *  ___________                                   ______________
      * |           |                                 |              |
@@ -56,20 +72,24 @@ class ProductLiveWrapper
     function updateFamiliesFromMyITToProductLive() {
         try
         {
-            $bdd = new PDO('mysql:host=localhost;dbname=node;charset=utf8', 'root', '');    // Change with your settings
+            $bdd = new PDO('mysql:host='.$this->hostname.';dbname='.$this->dbname.';charset=utf8', $this->username, $this->password);
         }
         catch (Exception $e)
         {
             die('Erreur : ' . $e->getMessage());
         }
-        // Find colors
-        $valuesColor = array();
-        $reponse = $bdd->query('SELECT * FROM mycolortable');   // Change with your color table
+        // Families
+        $families = array();
+        $reponse = $bdd->query('SELECT * FROM family');
         while ($donnees = $reponse->fetch())
         {
-            array_push($valuesColor, new SingleOption($donnees['id'], array(new NameLang($donnees['nameFR'], "FR")), $donnees['code'], "", ""));
+            $family = new family($donnees['idfamily'], (isset($donnees['idFamilyParent']) ? $donnees['idFamilyParent'] : ""), array(new NameLang($donnees['name'], LANG::FR)), array());
+            array_push($families, $family);
         }
-        $colors = new Pivot("color", array(new NameLang("Couleur", "FR")), "singleOption", $valuesColor);
+        
+        $familyMessage = new FamiliesMessage($families);
+
+        return $familyMessage;
     }
     
     /*
@@ -93,7 +113,60 @@ class ProductLiveWrapper
      * Do not change the name of these functions
      */
     function updateProductsFromMyITToProductLive($totalProducts) {
-    
+        try
+        {
+            $bdd = new PDO('mysql:host='.$this->hostname.';dbname='.$this->dbname.';charset=utf8', $this->username, $this->password);
+        }
+        catch (Exception $e)
+        {
+            die('Erreur : ' . $e->getMessage());
+        }
+        // Products
+        $productsMessage = array();
+        $reponse = $bdd->query('SELECT * FROM product LIMIT '.$totalProducts);
+        while ($donnees = $reponse->fetch())
+        {
+            var_dump($donnees);
+            $plStrategyName = "Code article";
+            $plType = IDENTIFICATION_TYPE::INTERNAL;
+            $value = $donnees['code_article'];
+            $identificationsStrategies = array(new identificationStrategyProductLive($plStrategyName, $plType, $value));
+            $idModelPl = "";
+            $idModel = $donnees['idproduct'];
+            $families = array(array("idName"=>$donnees['family_idfamily']));
+            $marketing = array(array(
+                    "idName" => "libelle_article",
+                    "values" => array(array("value"=>$donnees['libelle_article'], "lang"=>LANG::FR))
+                    ),
+                array(
+                        "idName" => "libelle_long",
+                        "values" => array(array("value"=>$donnees['libelle_long'], "lang"=>LANG::FR))
+                    ),
+                array(
+                        "idName" => "descriptif",
+                        "values" => array(array("value"=>$donnees['descriptif'], "lang"=>LANG::FR))
+                    )
+            );
+            $media = array(
+                "images" => array(
+                        array(
+                            "idName" => $donnees['image1'],
+                            "url" => $donnees['image1'],
+                            "position" => "1"
+                            )
+                    )
+                );
+            $features = array();
+            $nodes = array();
+            $model = new modelProductLive($idModelPl, $idModel, $identificationsStrategies, $families, $marketing, $features, $media, $nodes);
+            $idProductPl = "";
+            $active = true;
+            $combinations = array();
+            $productMessage = new ProductMessage($idProductPl, $active, $model, $combinations);
+            array_push($productsMessage, $productMessage);
+        }
+
+        return $productsMessage;
     }
     
     /*
