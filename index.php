@@ -54,12 +54,11 @@ if(isset($_POST['hostname']) && isset($_POST['dbname']) && isset($_POST['usernam
 
 // Actions - Updates and start service
 
-if(isset($_GET['update'])) {
-    if ($_GET['update'] == 'matrix') {
+if(isset($_POST['update'])) {
+    if ($_POST['update'] == 'matrix') {
         // Get the message
         $pl = new ProductLiveWrapper();
         $matrixMessage = $pl->updateMatrixFromMyITToProductLive();
-        var_dump($matrixMessage);
         // Send the message
         $rest = new RestAPI();
         $response = $rest->postMessage($matrixMessage, "matrix", "create");
@@ -170,7 +169,8 @@ $password = $databaseConfig['password'];
     </div>
     <div>
         <h2>Taxonomie</h2>
-        <form  method="post" action="?update=matrix" style="display: inline;">
+        <form  method="post" action="<?php $_SERVER['REQUEST_URI'] ?>" style="display: inline;">
+            <input type="hidden" name="update" value="matrix">
             <button type="submit" class="btn btn-primary <?php if ($keyInvalid==true | $connectionStringProductLive==="") echo 'disabled'; ?>">Mettre &agrave; jour la "Matrix"</button>
         </form>
         <button type="submit" class="btn btn-primary <?php if ($keyInvalid==true | $connectionStringProductLive==="") echo 'disabled'; ?>" style="margin-left: 10px;">Mettre &agrave; jour les "families"</button>

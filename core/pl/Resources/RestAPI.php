@@ -23,6 +23,16 @@ class RestAPI {
     //public $urlDelete = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/";
     //public $urlBlob = "http://productlive-connectors.azurewebsites.net/rest/message";
 
+    public $sendMessageToken = "";
+    public $sender = "";
+
+    function __construct()
+    {
+        $productLiveConfig = parse_ini_file(__DIR__."/../config.ini");
+        $this->$sendMessageToken = $productLiveConfig['sendMessageToken'];
+        $this->$sender = $productLiveConfig['sender'];
+    }
+
     function postMessage($message, $flux, $action) {
         $productLiveConfig = parse_ini_file(__DIR__."/../config.ini");
         $sendMessageToken = $productLiveConfig['sendMessageToken'];
@@ -143,7 +153,6 @@ class RestAPI {
                     'content' => $content_json
                 )
             );
-            var_dump($headers);
 
             // Creates a stream context
             $context = stream_context_create($headers);
