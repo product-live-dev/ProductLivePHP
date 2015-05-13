@@ -1,14 +1,12 @@
 <?php
 
 require_once('core/pl/Resources/Util.php');
+require_once('core/pl/Resources/RestAPI.php');
+require_once('ProductLiveWrapper.php');
 
 // Connection String to Product-Live
 $keySaved = false;
 $keyInvalid = false;
-
-// Database
-$databaseSaved =  false;
-$databaseInvalid = false;
 
 if(isset($_POST['connectionString'])) {
     $connectionString64 = base64_decode($_POST['connectionString']);
@@ -28,6 +26,10 @@ if(isset($_POST['connectionString'])) {
         $keyInvalid = true;
     }
 }
+
+// Database
+$databaseSaved =  false;
+$databaseInvalid = false;
 
 if(isset($_POST['hostname']) && isset($_POST['dbname']) && isset($_POST['username']) && isset($_POST['password'])) {
     $host = str_replace("http://", "", $_POST['hostname']);
@@ -50,10 +52,33 @@ if(isset($_POST['hostname']) && isset($_POST['dbname']) && isset($_POST['usernam
     }
 }
 
+// Actions - Updates and start service
+
+if(isset($_GET['update'])) {
+    if ($_GET['update'] == 'matrix') {
+        // Get the message
+        $pl = new ProductLiveWrapper();
+        $matrixMessage = $pl->updateMatrixFromMyITToProductLive();
+        // Send the message
+        $rest = new RestAPI();
+        $response = $rest->postMessage($matrixMessage, "matrix", "create");
+        var_dump($response);
+    }
+}
+
+
+
+// Settings
+
 $productLiveConfig = parse_ini_file(__DIR__."/core/pl/config.ini");
 $connectionStringProductLive = $productLiveConfig['connectionStringProductLive'];
 
 $databaseConfig = parse_ini_file(__DIR__."/config.ini");
+$hostname = $databaseConfig['hostname'];
+$dbname = $databaseConfig['dbname'];
+$username = $databaseConfig['username'];
+$password = $databaseConfig['password'];
+
 ?>
 <html>
 <head>
@@ -115,7 +140,7 @@ $databaseConfig = parse_ini_file(__DIR__."/config.ini");
             <input class="form-control" id="hostname" name="hostname" placeholder="Hostname" <?php if (isset($hostname)) {echo 'value="'.$hostname.'""';}?> style="width: 270px; display: inline;">
             <input class="form-control" id="dbname" name="dbname" placeholder="Database name" <?php if (isset($dbname)) {echo 'value="'.$dbname.'""';}?> style="width: 220px; display: inline;">
             <input class="form-control" id="username" name="username" placeholder="User name" <?php if (isset($username)) {echo 'value="'.$username.'""';}?> style="width: 220px; display: inline;">
-            <input class="form-control" id="password" name="password" placeholder="Password" <?php if (isset($password)) {echo 'value="'.$password.'""';}?> style="width: 220px; display: inline;">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" <?php if (isset($password)) {echo 'value="'.$password.'""';}?> style="width: 220px; display: inline;">
             <button type="submit" class="btn btn-primary" style="display: inline;">Enregistrer les identifiants</button>
         </div>
     </form>

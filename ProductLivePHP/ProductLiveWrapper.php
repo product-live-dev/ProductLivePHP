@@ -21,11 +21,28 @@ class ProductLiveWrapper
     function updateMatrixFromMyITToProductLive() {
     
         // Create marketing attributes
+        $marketing = array();
         $marketingNameAttribute = new Marketing("name", array(new NameLang("Nom", LANG::FR)), true, DATA_TYPE::TEXT);
         $marketingShortDescriptionAttribute = new Marketing("description_short", array(new NameLang("Description courte", LANG::FR)), true, DATA_TYPE::RICHTEXT);
         $marketingLongDescriptionAttribute = new Marketing("description", array(new NameLang("Description longue", LANG::FR)), true, DATA_TYPE::RICHTEXT);
-        $marketing = array($marketingNameAttribute, $marketingShortDescriptionAttribute, $marketingLongDescriptionAttribute);
-    
+        array_push($marketing, $marketingNameAttribute);
+        array_push($marketing, $marketingShortDescriptionAttribute);
+        array_push($marketing, $marketingLongDescriptionAttribute);
+        
+        // Pivots
+        $pivots = array();
+        
+        // Features
+        $features = array();
+        
+        // Create the matrix message
+        $matrixMessage = new MatrixMessage(
+            $marketing,
+            $pivots,
+            $features
+        );
+        
+        return $matrixMessage;    
     }
     
     /*
