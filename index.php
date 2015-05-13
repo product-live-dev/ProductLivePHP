@@ -166,7 +166,7 @@ $password = $databaseConfig['password'];
     ?>
 
     <div class="page-header">
-        <h1>éMise &agrave; jour des structures <small>Cliquez sur une des structures</small></h1>
+        <h1>Mise &agrave; jour des structures <small>Cliquez sur une des structures</small></h1>
     </div>
     <div>
         <h2>Taxonomie</h2>

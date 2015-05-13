@@ -22,8 +22,8 @@ class ProductLiveWrapper
     
         // Create marketing attributes
         $marketing = array();
-        $marketingLibelleArticleAttribute = new Marketing("libelle_article", array(new NameLang("Libelle article", LANG::FR)), true, DATA_TYPE::TEXT);
-        $marketingLibelleLongAttribute = new Marketing("libelle_long", array(new NameLang("Libelle long", LANG::FR)), true, DATA_TYPE::RICHTEXT);
+        $marketingLibelleArticleAttribute = new Marketing("libelle_article", array(new NameLang("Libellé article", LANG::FR)), true, DATA_TYPE::TEXT);
+        $marketingLibelleLongAttribute = new Marketing("libelle_long", array(new NameLang("Libellé long", LANG::FR)), true, DATA_TYPE::RICHTEXT);
         $marketingDescriptifAttribute = new Marketing("descriptif", array(new NameLang("Descriptif", LANG::FR)), true, DATA_TYPE::RICHTEXT);
         array_push($marketing, $marketingLibelleArticleAttribute);
         array_push($marketing, $marketingLibelleLongAttribute);
