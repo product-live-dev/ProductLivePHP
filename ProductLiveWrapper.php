@@ -123,10 +123,12 @@ class ProductLiveWrapper
         }
         // Products
         $productsMessage = array();
-        $reponse = $bdd->query('SELECT * FROM product LIMIT '.$totalProducts);
+        $limit = "";
+        if ($totalProducts!="all")
+            $limit =  ' LIMIT '.$totalProducts;
+        $reponse = $bdd->query('SELECT * FROM product'.$limit);
         while ($donnees = $reponse->fetch())
         {
-            var_dump($donnees);
             $plStrategyName = "Code article";
             $plType = IDENTIFICATION_TYPE::INTERNAL;
             $value = $donnees['code_article'];
@@ -158,7 +160,7 @@ class ProductLiveWrapper
                 );
             $features = array();
             $nodes = array();
-            $model = new modelProductLive($idModelPl, $idModel, $identificationsStrategies, $families, $marketing, $features, $media, $nodes);
+            $model = new modelProductLive($idModelPl, $idModel, $identificationsStrategies, $families, $marketing, $features, $media);
             $idProductPl = "";
             $active = true;
             $combinations = array();
@@ -177,7 +179,26 @@ class ProductLiveWrapper
      *
      * Do not change the name of this function
      */
-    function updateProductFromProductLiveToMyIT() {
-    
+    function updateProductFromProductLiveToMyIT($productMessage) {
+        // Update product table
+        try
+        {
+            $bdd = new PDO('mysql:host='.$this->hostname.';dbname='.$this->dbname.';charset=utf8', $this->username, $this->password);
+            $idModel = $productMessage['model']['idModel'];
+            $marketings = $productMessage['model']['marketing'];
+            foreach ($marketings as $marketing) {
+                if ($marketing['idName'] == "libelle_article")
+                    $libelle_article = $marketing['values'][0]['value'];
+                if ($marketing['idName'] == "libelle_long")
+                    $libelle_long = $marketing['values'][0]['value'];
+                if ($marketing['idName'] == "descriptif")
+                    $descriptif = $marketing['values'][0]['value'];
+            }
+            $reponse = $bdd->query('UPDATE product SET libelle_article=\''.$libelle_article.'\', libelle_long=\''.$libelle_long.'\', descriptif=\''.$descriptif.'\' WHERE idproduct = '.$idModel);
+        }
+        catch (Exception $e)
+        {
+            die('Erreur : ' . $e->getMessage());
+        }        
     }
 }

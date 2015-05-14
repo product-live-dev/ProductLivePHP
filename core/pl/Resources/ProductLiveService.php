@@ -11,7 +11,7 @@ class ProductLiveService {
 	function startService() {
 		if($this->isRunning()==false) {
 			//echo 'start running<br>';
-			$this->execInBackground("php ".__DIR__."/Consumer.php "._PS_BASE_URL_.__PS_BASE_URI__);
+			$this->execInBackground("php ".__DIR__."/Consumer.php");
 			//echo 'started exec in background<br>';
 			return true;
 		} else {

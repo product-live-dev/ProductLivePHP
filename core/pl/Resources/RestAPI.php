@@ -13,18 +13,19 @@ class BlobMessage {
 }
 
 class RestAPI {
-    public $urlPost = "https://productlive.servicebus.windows.net/connectorsqueuedev/messages?timeout=60";
+    // public $urlPost = "https://productlive.servicebus.windows.net/connectorsqueuedev/messages?timeout=60";
+    // public $urlGet = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/head?timeout=10";
+    // public $urlDelete = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/";
+    // public $urlBlob = "http://dev-productlive-connectors.azurewebsites.net/rest/message";
+
+    public $urlPost = "https://productlive.servicebus.windows.net/connectorsqueue/messages?timeout=60";
     public $urlGet = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/head?timeout=10";
     public $urlDelete = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/";
-    public $urlBlob = "http://dev-productlive-connectors.azurewebsites.net/rest/message";
-
-    //public $urlPost = "https://productlive.servicebus.windows.net/connectorsqueue/messages?timeout=60";
-    //public $urlGet = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/head?timeout=10";
-    //public $urlDelete = "https://productlive.servicebus.windows.net/topic/subscriptions/allmessages/messages/";
-    //public $urlBlob = "http://productlive-connectors.azurewebsites.net/rest/message";
+    public $urlBlob = "http://productlive-connectors.azurewebsites.net/rest/message";
 
     public $sendMessageToken = "";
     public $sender = "";
+    public $receiveMessageToken = "";
 
     function __construct()
     {
@@ -32,6 +33,9 @@ class RestAPI {
         $productLiveConfig = parse_ini_file(__DIR__."/../config.ini");
         $this->sendMessageToken = $productLiveConfig['sendMessageToken'];
         $this->sender = $productLiveConfig['sender'];
+        $this->receiveMessageToken = $productLiveConfig['receiveMessageToken'];
+        $this->topic = $productLiveConfig['topic'];
+        $this->subscription = $productLiveConfig['subscription'];
     }
 
     function postMessage($message, $flux, $action) {
@@ -187,20 +191,12 @@ class RestAPI {
     }
 
     function getMessage() {
-        $params = parse_ini_file ( __DIR__."/../config.ini");
-        $receiveMessageToken = $params['receiveMessageToken'];
-        $topic = $params['topic'];
-        $subscription = $params['subscription'];
-        
-        //$receiveMessageToken = Configuration::get('PL_RECEIVE_MESSAGE_TOKEN');
-        //$receiveMessageToken = "SharedAccessSignature sr=https%3A%2F%2Fproductlive.servicebus.windows.net%2FLa_halle_aux_fringues-6acd318d7efa42328d11e030231007b3&sig=DfwXkBxYm2NJDfoo083XjWxZpZfQkmiUAjfcPyf%2BcBU%3D&se=1460915568&skn=Listen";
-
         // Set the HTTP request authentication headers
         $headers = array(
             'http' => array(
                 'method' => "POST",
                 'header' => "Content-type: application/atom+xml;type=entry;charset=utf-8" . "\r\n" .
-                    "Authorization: " . $receiveMessageToken  . "\r\n" .
+                    "Authorization: " . $this->receiveMessageToken  . "\r\n" .
                     "Content-Length: 0"
             )
         );
@@ -209,10 +205,8 @@ class RestAPI {
         $context = stream_context_create($headers);
 
         // Get url
-        //Configuration::get('PL_TOPIC')
-        //Configuration::get('PL_SUBSCRIPTION')
-        $service_url_get = str_replace("topic", $topic, $this->urlGet);
-        $service_url_get = str_replace("allmessages", $subscription, $service_url_get);
+        $service_url_get = str_replace("topic", $this->topic, $this->urlGet);
+        $service_url_get = str_replace("allmessages", $this->subscription, $service_url_get);
 
         // Open the URL with the HTTP headers (fopen wrappers must be enabled)
         $page = @file_get_contents($service_url_get, false, $context); //fopen($url, 'r', false, $context);
@@ -244,17 +238,13 @@ class RestAPI {
     }
 
     function deleteMessage($messageId, $lockToken) {
-        //echo "delete message<br>";
         // Déverouiller le message puis le supprimer
-        $receiveMessageToken = Configuration::get('PL_RECEIVE_MESSAGE_TOKEN');
-        //$receiveMessageToken = "SharedAccessSignature sr=https//productlive.servicebus.windows.net/La_halle_aux_fringues-6acd318d7efa42328d11e030231007b3&sig=DfwXkBxYm2NJDfoo083XjWxZpZfQkmiUAjfcPyf%2BcBU%3D&se=1460915568&skn=Listen";
-
         // Set the HTTP request authentication headers
         $headers = array(
             'http' => array(
                 'method' => "DELETE",
                 'header' => "Content-type: application/atom+xml;type=entry;charset=utf-8" . "\r\n" .
-                    "Authorization: " . $receiveMessageToken . "\r\n" .
+                    "Authorization: " . $this->receiveMessageToken . "\r\n" .
                     "Content-Length: 0"
             )
         );
@@ -263,8 +253,8 @@ class RestAPI {
         $context = stream_context_create($headers);
 
         // Get url
-        $service_url_delete = str_replace("topic", Configuration::get('PL_TOPIC'), $this->urlDelete);
-        $service_url_delete = str_replace("allmessages", Configuration::get('PL_SUBSCRIPTION'), $service_url_delete);
+        $service_url_delete = str_replace("topic", $this->topic, $this->urlDelete);
+        $service_url_delete = str_replace("allmessages", $this->subscription, $service_url_delete);
         $service_url_delete = $service_url_delete.$messageId."/".$lockToken;
         //echo $service_url_delete."<br>";
 
@@ -296,8 +286,6 @@ class RestAPI {
         }
 
         return $result;
-
-
     }
 
 }

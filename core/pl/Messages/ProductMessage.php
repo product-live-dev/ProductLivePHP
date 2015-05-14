@@ -26,7 +26,7 @@ class modelProductLive {
 	public $media = array();
 	public $nodes = array();
 
-	function __construct($idModelPl, $idModel, $identificationsStrategies, $families, $marketing, $features, $media, $nodes)
+	function __construct($idModelPl, $idModel, $identificationsStrategies, $families, $marketing, $features, $media)
     {
         $this->idModelPl = $idModelPl;
         $this->idModel = $idModel;
@@ -35,7 +35,6 @@ class modelProductLive {
         $this->marketing = $marketing;
         $this->features = $features;
         $this->media = $media;
-        $nodes->nodes = $nodes;
     }
 }
 
@@ -47,14 +46,13 @@ class combinationProductLive {
 	public $media = array();
 	public $nodes = array();
 
-	function __construct($idCombinationPl, $idCombination, $identificationsStrategies, $pivots, $media, $nodes)
+	function __construct($idCombinationPl, $idCombination, $identificationsStrategies, $pivots, $media)
 	{
 		$this->idCombinationPl = $idCombinationPl;
 		$this->idCombination = $idCombination;
 		$this->identificationsStrategies = $identificationsStrategies;
 		$this->pivots = $pivots;
 		$this->media = $media;
-		$this->nodes = $nodes;
 	}
 }
 

@@ -3,6 +3,7 @@
 require_once('core/pl/Resources/Util.php');
 require_once('core/pl/Resources/RestAPI.php');
 require_once('ProductLiveWrapper.php');
+require_once('core/pl/Resources/ProductLiveService.php');
 
 // Connection String to Product-Live
 $keySaved = false;
@@ -53,7 +54,6 @@ if(isset($_POST['hostname']) && isset($_POST['dbname']) && isset($_POST['usernam
 }
 
 // Actions - Updates and start service
-
 if(isset($_POST['update'])) {
     if ($_POST['update'] == 'matrix') {
         // Get the message
@@ -75,7 +75,6 @@ if(isset($_POST['update'])) {
         // Get the message
         $pl = new ProductLiveWrapper();
         $productsMessage = $pl->updateProductsFromMyITToProductLive(3);
-        var_dump($productsMessage);
         // Send the message
         $rest = new RestAPI();
         $response = $rest->postMessage($productsMessage, "products", "create");
@@ -83,6 +82,16 @@ if(isset($_POST['update'])) {
     } 
 }
 
+// Watcher
+if (isset($_POST['service'])) {
+    $productLiveService = new ProductLiveService();
+    if ($_POST['service'] == 'start') {
+        $productLiveService->startService();
+    } else if ($_POST['service'] == 'stop') {
+        $productLiveService->forceServiceToStop();
+    }
+    sleep(2);
+}
 
 
 // Settings
@@ -95,6 +104,10 @@ $hostname = $databaseConfig['hostname'];
 $dbname = $databaseConfig['dbname'];
 $username = $databaseConfig['username'];
 $password = $databaseConfig['password'];
+
+// Service
+$productLiveService = new ProductLiveService();
+
 
 ?>
 <html>
@@ -252,10 +265,29 @@ $password = $databaseConfig['password'];
         <h1>Service de message <small>D&eacute;marrer le service</small></h1>
     </div>
     <div>
-        <div class="alert alert-warning" role="alert">
-            <strong>Information</strong> Le service de message n'est pas en marche
-        </div>
-        <button type="submit" class="btn btn-primary" style="display: inline;">D&eacute;marrer le service de message</button>
+        <?php
+            if($productLiveService->isRunning()) {
+                echo '
+                <div class="alert alert-success" role="alert">
+                    <strong>Information</strong> Le service de message est en marche
+                </div>
+                <form  method="post" action="'.$_SERVER['REQUEST_URI'].'" style="display: inline;">
+                    <input type="hidden" name="service" value="stop">
+                    <button type="submit" class="btn btn-primary" style="display: inline;">Arrêter le service de message</button>
+                </form> 
+                ';
+            } else {
+                echo '
+                <div class="alert alert-warning" role="alert">
+                    <strong>Information</strong> Le service de message n\'est pas en marche
+                </div>
+                <form  method="post" action="'.$_SERVER['REQUEST_URI'].'" style="display: inline;">
+                    <input type="hidden" name="service" value="start">
+                    <button type="submit" class="btn btn-primary" style="display: inline;">D&eacute;marrer le service de message</button>
+                </form> 
+                ';
+            }
+        ?>
     </div>
     <br/>
     <br/>
